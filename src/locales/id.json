@@ -1,0 +1,89 @@
+{
+  "SignInPage": {
+    "meta_title": "Masuk"
+  },
+  "SignUpPage": {
+    "meta_title": "Daftar"
+  },
+  "SignInForm": {
+    "title": "Masuk ke akun Anda",
+    "email_label": "Email",
+    "email_placeholder": "Masukkan email",
+    "password_label": "Kata sandi",
+    "password_placeholder": "Masukkan kata sandi",
+    "forgot_password": "Lupa kata sandi?",
+    "remember_me": "Ingat saya",
+    "show_password": "Tampilkan kata sandi",
+    "hide_password": "Sembunyikan kata sandi",
+    "submit_button": "Masuk",
+    "footer_text": "Belum punya akun?",
+    "footer_link": "Buat akun"
+  },
+  "SignUpForm": {
+    "title": "Buat akun",
+    "name_label": "Nama lengkap",
+    "name_placeholder": "Masukkan nama lengkap",
+    "email_label": "Email",
+    "email_placeholder": "Masukkan email",
+    "password_label": "Kata sandi",
+    "password_placeholder": "Masukkan kata sandi",
+    "confirm_password_label": "Konfirmasi kata sandi",
+    "confirm_password_placeholder": "Masukkan ulang kata sandi",
+    "show_password": "Tampilkan kata sandi",
+    "hide_password": "Sembunyikan kata sandi",
+    "submit_button": "Daftar",
+    "footer_text": "Sudah punya akun?",
+    "footer_link": "Masuk"
+  },
+  "AuthValidation": {
+    "email_required": "Email wajib diisi",
+    "email_invalid": "Masukkan email yang valid",
+    "password_required": "Kata sandi wajib diisi",
+    "password_min": "Kata sandi minimal {min} karakter",
+    "name_required": "Nama lengkap wajib diisi",
+    "confirm_password_required": "Konfirmasi kata sandi Anda",
+    "password_mismatch": "Kata sandi tidak cocok",
+    "sign_in_failed": "Email atau kata sandi salah",
+    "sign_up_failed": "Pendaftaran gagal"
+  },
+  "DashboardPage": {
+    "meta_title": "Dasbor",
+    "project_statistics": "Statistik proyek",
+    "total_visits": "Total kunjungan",
+    "visits_chart_label": "Grafik total kunjungan",
+    "visits_chart_tooltip": "Pengunjung",
+    "stat_bounce_rate": "Bounce rate",
+    "stat_pages_per_visit": "Halaman per kunjungan",
+    "stat_monthly_visits": "Total kunjungan bulanan",
+    "stat_visit_duration": "Rata-rata durasi kunjungan",
+    "invoices_title": "Invoice",
+    "upload_invoice": "Unggah invoice",
+    "invoice_viewed": "Dilihat",
+    "invoice_pending": "Menunggu",
+    "promo_title": "Bekerja di mana saja dengan aplikasi mobile Invoicer"
+  },
+  "DashboardNav": {
+    "welcome_back": "Selamat datang kembali,",
+    "open_menu": "Buka menu",
+    "close_menu": "Tutup menu",
+    "logout": "Keluar",
+    "logout_confirm_title": "Keluar akun?",
+    "logout_confirm_description": "Anda perlu masuk kembali untuk mengakses dasbor.",
+    "dashboard": "Dasbor",
+    "dashboard_short": "Dasbor",
+    "clients": "Klien",
+    "clients_short": "Klien",
+    "events": "Events",
+    "events_short": "Events",
+    "settings": "Pengaturan",
+    "settings_short": "Pengaturan"
+  },
+  "AdminPage": {
+    "meta_title": "Admin",
+    "title": "Admin"
+  },
+  "ModalConfirmation": {
+    "cancel": "Batal",
+    "confirm": "Konfirmasi"
+  }
+}

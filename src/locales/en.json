@@ -1,0 +1,89 @@
+{
+  "SignInPage": {
+    "meta_title": "Sign in"
+  },
+  "SignUpPage": {
+    "meta_title": "Sign up"
+  },
+  "SignInForm": {
+    "title": "Sign in to your account",
+    "email_label": "Email",
+    "email_placeholder": "Enter email",
+    "password_label": "Password",
+    "password_placeholder": "Enter password",
+    "forgot_password": "Forgot password?",
+    "remember_me": "Remember me",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "submit_button": "Sign in",
+    "footer_text": "Not registered yet?",
+    "footer_link": "Create an account"
+  },
+  "SignUpForm": {
+    "title": "Create an account",
+    "name_label": "Full name",
+    "name_placeholder": "Enter full name",
+    "email_label": "Email",
+    "email_placeholder": "Enter email",
+    "password_label": "Password",
+    "password_placeholder": "Enter password",
+    "confirm_password_label": "Confirm password",
+    "confirm_password_placeholder": "Re-enter password",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "submit_button": "Sign up",
+    "footer_text": "Already have an account?",
+    "footer_link": "Sign in"
+  },
+  "AuthValidation": {
+    "email_required": "Email is required",
+    "email_invalid": "Enter a valid email",
+    "password_required": "Password is required",
+    "password_min": "Password must be at least {min} characters",
+    "name_required": "Full name is required",
+    "confirm_password_required": "Confirm your password",
+    "password_mismatch": "Passwords do not match",
+    "sign_in_failed": "Incorrect email or password",
+    "sign_up_failed": "Sign up failed"
+  },
+  "DashboardPage": {
+    "meta_title": "Dashboard",
+    "project_statistics": "Project statistics",
+    "total_visits": "Total visits",
+    "visits_chart_label": "Total visits chart",
+    "visits_chart_tooltip": "Visitors",
+    "stat_bounce_rate": "Bounce rate",
+    "stat_pages_per_visit": "Pages per visit",
+    "stat_monthly_visits": "Total monthly visits",
+    "stat_visit_duration": "Avg. visit duration",
+    "invoices_title": "Invoices",
+    "upload_invoice": "Upload invoice",
+    "invoice_viewed": "Viewed",
+    "invoice_pending": "Pending",
+    "promo_title": "Work anywhere with the Invoicer mobile apps"
+  },
+  "DashboardNav": {
+    "welcome_back": "Welcome back,",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "logout": "Logout",
+    "logout_confirm_title": "Log out?",
+    "logout_confirm_description": "You will need to sign in again to access your dashboard.",
+    "dashboard": "Dashboard",
+    "dashboard_short": "Dash",
+    "clients": "Clients",
+    "clients_short": "Clients",
+    "events": "Events",
+    "events_short": "Events",
+    "settings": "Settings",
+    "settings_short": "Settings"
+  },
+  "AdminPage": {
+    "meta_title": "Admin",
+    "title": "Admin"
+  },
+  "ModalConfirmation": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  }
+}
