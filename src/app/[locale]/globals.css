@@ -44,6 +44,14 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-dnet-dark: var(--dnet-dark);
+  --color-dnet-dark-foreground: var(--dnet-dark-foreground);
+  --color-dnet-blue: var(--dnet-blue);
+  --color-dnet-blue-foreground: var(--dnet-blue-foreground);
+  --color-dnet-orange: var(--dnet-orange);
+  --color-dnet-orange-foreground: var(--dnet-orange-foreground);
+  --color-dnet-green: var(--dnet-green);
+  --color-dnet-green-foreground: var(--dnet-green-foreground);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -84,6 +92,15 @@
   --chart-4: oklch(0.796 0.145 77.2);
   --chart-5: oklch(0.621 0.212 26);
   --radius: 0.625rem;
+  /* DNET brand colors — fixed regardless of light/dark mode */
+  --dnet-dark: #0f1b14;
+  --dnet-dark-foreground: #ffffff;
+  --dnet-blue: #006cb5;
+  --dnet-blue-foreground: #ffffff;
+  --dnet-orange: #e2672d;
+  --dnet-orange-foreground: #ffffff;
+  --dnet-green: #5cb85c;
+  --dnet-green-foreground: #ffffff;
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.292 0.13 273.2);
   --sidebar-primary: oklch(0.525 0.242 272.6);
