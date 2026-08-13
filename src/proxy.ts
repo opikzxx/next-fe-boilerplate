@@ -15,11 +15,11 @@ function localizedPath(pathname: string, path: string) {
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
-  const isDashboardRoute = /\/dashboard(\/|$)/.test(pathname);
+  const isCreatorRoute = /\/creator(\/|$)/.test(pathname);
   const isAdminRoute = /\/admin(\/|$)/.test(pathname);
-  const isAuthRoute = /\/(sign-in|sign-up)(\/|$)/.test(pathname);
+  const isAuthRoute = /\/sign-in(\/|$)/.test(pathname);
 
-  if (isDashboardRoute && !req.auth) {
+  if (isCreatorRoute && !req.auth) {
     return NextResponse.redirect(
       new URL(localizedPath(pathname, "/sign-in"), req.nextUrl),
     );
@@ -33,7 +33,7 @@ export default auth((req) => {
 
   if (isAdminRoute && !req.auth?.user.roles.includes("admin")) {
     return NextResponse.redirect(
-      new URL(localizedPath(pathname, "/dashboard"), req.nextUrl),
+      new URL(localizedPath(pathname, "/creator"), req.nextUrl),
     );
   }
 

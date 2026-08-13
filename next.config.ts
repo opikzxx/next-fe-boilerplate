@@ -2,9 +2,27 @@ import "./src/lib/env";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { Env } from "./src/lib/env";
+
+const r2PublicUrl = new URL(Env.R2_PUBLIC_URL);
 
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: r2PublicUrl.protocol.replace(":", "") as "http" | "https",
+        hostname: r2PublicUrl.hostname,
+        port: r2PublicUrl.port,
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "res.klook.com",
+        pathname: "/**",
+      },
+    ],
+  },
   devIndicators: {
     position: "bottom-right",
   },

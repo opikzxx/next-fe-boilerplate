@@ -4,19 +4,16 @@ import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/lib/i18n-navigation";
 import { cn } from "@/lib/utils";
-import { navItems } from "./nav-items";
+import { getNavItems, isNavItemActive } from "./nav-items";
 
-function MobileTabBar() {
+function MobileTabBar({ isAdmin }: { isAdmin: boolean }) {
   const t = useTranslations("DashboardNav");
   const pathname = usePathname();
 
   return (
     <nav className="bg-white fixed inset-x-0 bottom-0 z-40 flex items-center justify-between px-2 py-2 md:hidden">
-      {navItems.map((item) => {
-        const isActive =
-          item.href === "/dashboard"
-            ? pathname === item.href
-            : pathname.startsWith(item.href);
+      {getNavItems(isAdmin).map((item) => {
+        const isActive = isNavItemActive(pathname, item.href);
 
         return (
           <Link

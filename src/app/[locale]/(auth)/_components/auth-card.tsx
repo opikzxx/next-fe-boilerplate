@@ -4,9 +4,9 @@ import { Link } from "@/lib/i18n-navigation";
 type AuthCardProps = {
   title: string;
   children: React.ReactNode;
-  footerText: string;
-  footerLinkLabel: string;
-  footerLinkHref: string;
+  footerText?: string;
+  footerLinkLabel?: string;
+  footerLinkHref?: string;
 };
 
 export function AuthCard(props: AuthCardProps) {
@@ -19,15 +19,17 @@ export function AuthCard(props: AuthCardProps) {
       </CardHeader>
       <CardContent className="flex flex-col gap-6 px-0">
         {props.children}
-        <p className="text-foreground text-center text-sm">
-          {props.footerText}{" "}
-          <Link
-            href={props.footerLinkHref}
-            className="text-primary font-medium hover:underline"
-          >
-            {props.footerLinkLabel}
-          </Link>
-        </p>
+        {props.footerText && props.footerLinkLabel && props.footerLinkHref && (
+          <p className="text-foreground text-center text-sm">
+            {props.footerText}{" "}
+            <Link
+              href={props.footerLinkHref}
+              className="text-primary font-medium hover:underline"
+            >
+              {props.footerLinkLabel}
+            </Link>
+          </p>
+        )}
       </CardContent>
     </Card>
   );

@@ -1,28 +1,47 @@
 import type { MetadataRoute } from "next";
+import { listPublishedPages } from "@/features/pages/api";
 import { routing } from "@/lib/i18n-routing";
 import { getBaseUrl, getI18nPath } from "@/utils/helpers";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
+  const pages = await listPublishedPages();
 
-  const routes = ["", "/about", "/counter", "/portfolio"];
-
-  // Generate portfolio detail pages
-  const portfolioRoutes = Array.from(
-    { length: 6 },
-    (_, i) => `/portfolio/${i}`,
-  );
-  const allRoutes = [...routes, ...portfolioRoutes];
-
-  return allRoutes.map((route) => ({
-    url: `${baseUrl}${route}`,
+  const homeEntries = routing.locales.map((locale) => ({
+    url: `${baseUrl}${getI18nPath("", locale)}`,
     lastModified: new Date(),
     alternates: {
       languages: Object.fromEntries(
         routing.locales
-          .filter((locale) => locale !== routing.defaultLocale)
-          .map((locale) => [locale, `${baseUrl}${getI18nPath(route, locale)}`]),
+          .filter((otherLocale) => otherLocale !== locale)
+          .map((otherLocale) => [
+            otherLocale,
+            `${baseUrl}${getI18nPath("", otherLocale)}`,
+          ]),
       ),
     },
   }));
+
+  const pageEntries = pages.map((page) => {
+    const translations = pages.filter(
+      (candidate) =>
+        candidate.translationGroupId === page.translationGroupId &&
+        candidate.locale !== page.locale,
+    );
+
+    return {
+      url: `${baseUrl}${getI18nPath(`/${page.slug}`, page.locale)}`,
+      lastModified: page.updatedAt,
+      alternates: {
+        languages: Object.fromEntries(
+          translations.map((translation) => [
+            translation.locale,
+            `${baseUrl}${getI18nPath(`/${translation.slug}`, translation.locale)}`,
+          ]),
+        ),
+      },
+    };
+  });
+
+  return [...homeEntries, ...pageEntries];
 }

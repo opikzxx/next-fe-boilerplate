@@ -13,7 +13,7 @@ export async function generateMetadata(
   props: DashboardLayoutProps,
 ): Promise<Metadata> {
   const { locale } = await props.params;
-  const t = await getTranslations({ locale, namespace: "DashboardPage" });
+  const t = await getTranslations({ locale, namespace: "CreatorPage" });
 
   return {
     title: t("meta_title"),
@@ -34,6 +34,7 @@ export default async function DashboardLayout(props: DashboardLayoutProps) {
     <DashboardShell
       name={session?.user.name ?? ""}
       image={session?.user.image}
+      isAdmin={session?.user.roles.includes("admin") ?? false}
     >
       {props.children}
     </DashboardShell>

@@ -10,9 +10,11 @@ import { getInitials } from "@/lib/utils";
 function DesktopSidebar({
   name,
   image,
+  isAdmin,
 }: {
   name: string;
   image?: string | null;
+  isAdmin: boolean;
 }) {
   const t = useTranslations("DashboardNav");
 
@@ -29,7 +31,7 @@ function DesktopSidebar({
         </div>
       </div>
 
-      <SidebarNavList />
+      <SidebarNavList isAdmin={isAdmin} />
 
       <LogoutButton className="mt-auto justify-center px-4" />
     </aside>

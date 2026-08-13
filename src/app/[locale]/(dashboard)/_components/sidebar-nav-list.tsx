@@ -4,19 +4,22 @@ import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/lib/i18n-navigation";
 import { cn } from "@/lib/utils";
-import { navItems } from "./nav-items";
+import { getNavItems, isNavItemActive } from "./nav-items";
 
-function SidebarNavList({ onNavigate }: { onNavigate?: () => void }) {
+function SidebarNavList({
+  onNavigate,
+  isAdmin,
+}: {
+  onNavigate?: () => void;
+  isAdmin: boolean;
+}) {
   const t = useTranslations("DashboardNav");
   const pathname = usePathname();
 
   return (
     <nav className="flex flex-col gap-1">
-      {navItems.map((item) => {
-        const isActive =
-          item.href === "/dashboard"
-            ? pathname === item.href
-            : pathname.startsWith(item.href);
+      {getNavItems(isAdmin).map((item) => {
+        const isActive = isNavItemActive(pathname, item.href);
 
         return (
           <Link

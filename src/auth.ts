@@ -1,24 +1,8 @@
+import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import type { JWT } from "next-auth/jwt";
 import { authConfig } from "@/auth.config";
-import { signIn as loginWithCredentials, refreshToken } from "@/features/auth/api";
-
-async function getRefreshedToken(token: JWT): Promise<JWT> {
-  try {
-    const data = await refreshToken(token.refreshToken);
-
-    return {
-      ...token,
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      expiresAt: Date.now() + data.expires_in * 1000,
-      error: undefined,
-    };
-  } catch {
-    return { ...token, error: "RefreshAccessTokenError" };
-  }
-}
+import { db } from "@/lib/db";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -36,43 +20,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        try {
-          const data = await loginWithCredentials({
-            email: credentials.email,
-            password: credentials.password,
-          });
+        const user = await db.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-          return {
-            id: String(data.user.id),
-            name: data.user.name,
-            email: data.user.email,
-            roles: data.user.roles,
-            accessToken: data.access_token,
-            refreshToken: data.refresh_token,
-            expiresAt: Date.now() + data.expires_in * 1000,
-          };
-        } catch {
+        if (!user) {
           return null;
         }
+
+        const isValidPassword = await compare(
+          credentials.password,
+          user.passwordHash,
+        );
+
+        if (!isValidPassword) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          roles: [user.role.toLowerCase()],
+        };
       },
     }),
   ],
-  callbacks: {
-    ...authConfig.callbacks,
-    async jwt({ token, user }) {
-      if (user) {
-        token.accessToken = user.accessToken;
-        token.refreshToken = user.refreshToken;
-        token.expiresAt = user.expiresAt;
-        token.roles = user.roles;
-        return token;
-      }
-
-      if (Date.now() < token.expiresAt) {
-        return token;
-      }
-
-      return getRefreshedToken(token);
-    },
-  },
 });

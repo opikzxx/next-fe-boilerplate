@@ -31,7 +31,7 @@ function niceMax(value: number) {
 }
 
 function VisitsLineChart({ data }: { data: ChartPoint[] }) {
-  const t = useTranslations("DashboardPage");
+  const t = useTranslations("CreatorPage");
   const defaultIndex = data.reduce(
     (bestIndex, point, index) =>
       point.value > data[bestIndex].value ? index : bestIndex,

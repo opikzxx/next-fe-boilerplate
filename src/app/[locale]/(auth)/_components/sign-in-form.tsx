@@ -50,12 +50,7 @@ export function SignInForm() {
   });
 
   return (
-    <AuthCard
-      title={t("title")}
-      footerText={t("footer_text")}
-      footerLinkLabel={t("footer_link")}
-      footerLinkHref="/sign-up"
-    >
+    <AuthCard title={t("title")}>
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-5 mt-6"

@@ -1,12 +1,12 @@
 import { setRequestLocale } from "next-intl/server";
 
-import { ProjectStatisticsCard } from "./_components/project-statistics-card";
+import { ProjectStatisticsCard } from "@/app/[locale]/(dashboard)/_components/project-statistics-card";
 
-type DashboardPageProps = {
+type CreatorPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function DashboardPage(props: DashboardPageProps) {
+export default async function CreatorPage(props: CreatorPageProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 

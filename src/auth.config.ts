@@ -9,9 +9,6 @@ export const authConfig = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = user.accessToken;
-        token.refreshToken = user.refreshToken;
-        token.expiresAt = user.expiresAt;
         token.roles = user.roles;
       }
       return token;
@@ -19,8 +16,6 @@ export const authConfig = {
     async session({ session, token }) {
       session.user.id = token.sub ?? "";
       session.user.roles = token.roles;
-      session.accessToken = token.accessToken;
-      session.error = token.error;
       return session;
     },
   },

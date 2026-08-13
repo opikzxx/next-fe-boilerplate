@@ -26,7 +26,7 @@ export default async function AdminLayout(props: AdminLayoutProps) {
   const session = await auth();
 
   if (!session?.user.roles.includes("admin")) {
-    redirect({ href: "/dashboard", locale });
+    redirect({ href: "/creator", locale });
   }
 
   return props.children;

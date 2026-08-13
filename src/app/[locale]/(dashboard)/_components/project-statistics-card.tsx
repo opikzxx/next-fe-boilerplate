@@ -23,7 +23,7 @@ const statIcons: Record<
 };
 
 function ProjectStatisticsCard() {
-  const t = useTranslations("DashboardPage");
+  const t = useTranslations("CreatorPage");
 
   const chartData = getChartData("90d");
   const statsData = getStatsData("90d");
