@@ -1,13 +1,18 @@
 "use server";
 
-import type { Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import { requireAdmin } from "@/features/auth/guards";
 import { db } from "@/lib/db";
 import type {
   CreatePageValues,
   UpdatePageMetaValues,
 } from "@/features/pages/schema";
-import { createPageSchema, updatePageMetaSchema } from "@/features/pages/schema";
+import {
+  createPageSchema,
+  SLUG_TAKEN_ERROR,
+  updatePageMetaSchema,
+} from "@/features/pages/schema";
+import { routing } from "@/lib/i18n-routing";
 
 export async function listPages() {
   await requireAdmin();
@@ -37,6 +42,11 @@ export async function listPublishedPages() {
   return db.page.findMany({ where: { status: "PUBLISHED" } });
 }
 
+/**
+ * Creates a page for every supported locale in one translation group, so a
+ * page and its translation always exist together and hreflang alternates
+ * (see `alternates.languages` in `[slug]/page.tsx`) never point at a gap.
+ */
 export async function createPage(values: CreatePageValues) {
   await requireAdmin();
 
@@ -45,17 +55,37 @@ export async function createPage(values: CreatePageValues) {
     slug_invalid: "Invalid slug",
   }).parse(values);
 
-  return db.page.create({
-    data: {
-      title: parsed.title,
-      slug: parsed.slug,
-      locale: parsed.locale,
-      translationGroupId: crypto.randomUUID(),
-      metaTitle: parsed.title,
-      metaDescription: "",
-      puckData: {},
-    },
-  });
+  const existing = await db.page.findFirst({ where: { slug: parsed.slug } });
+
+  if (existing) {
+    throw new Error(SLUG_TAKEN_ERROR);
+  }
+
+  const translationGroupId = crypto.randomUUID();
+
+  try {
+    return await db.$transaction(
+      routing.locales.map((locale) =>
+        db.page.create({
+          data: {
+            title: parsed.title,
+            slug: parsed.slug,
+            locale,
+            translationGroupId,
+            metaTitle: parsed.title,
+            metaDescription: "",
+            puckData: {},
+          },
+        }),
+      ),
+    );
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      throw new Error(SLUG_TAKEN_ERROR);
+    }
+
+    throw error;
+  }
 }
 
 export async function updatePageContent(id: string, puckData: Prisma.InputJsonValue) {
@@ -91,4 +121,10 @@ export async function deletePage(id: string) {
   await requireAdmin();
 
   await db.page.delete({ where: { id } });
+}
+
+export async function deletePageGroup(translationGroupId: string) {
+  await requireAdmin();
+
+  await db.page.deleteMany({ where: { translationGroupId } });
 }

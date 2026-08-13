@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -9,9 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createPage } from "@/features/pages/api";
-import { createPageSchema } from "@/features/pages/schema";
+import { createPageSchema, SLUG_TAKEN_ERROR } from "@/features/pages/schema";
 import type { CreatePageValues } from "@/features/pages/schema";
-import { routing } from "@/lib/i18n-routing";
 import { useRouter } from "@/lib/i18n-navigation";
 
 function slugify(value: string) {
@@ -24,6 +23,7 @@ function slugify(value: string) {
 
 export function NewPageForm() {
   const t = useTranslations("AdminPageNewPage");
+  const locale = useLocale();
   const router = useRouter();
   const [isSlugTouched, setIsSlugTouched] = useState(false);
 
@@ -37,16 +37,20 @@ export function NewPageForm() {
     defaultValues: {
       title: "",
       slug: "",
-      locale: routing.defaultLocale,
     },
   });
 
   const handleSubmit = form.handleSubmit(async (values) => {
     try {
-      const page = await createPage(values);
+      const pages = await createPage(values);
+      const page = pages.find((created) => created.locale === locale) ?? pages[0];
       toast.success(t("toast_created"));
       router.push(`/admin/pages/${page.id}/edit`);
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.message === SLUG_TAKEN_ERROR) {
+        form.setError("slug", { message: t("error_slug_taken") });
+        return;
+      }
       toast.error(t("error_generic"));
     }
   });
@@ -91,20 +95,7 @@ export function NewPageForm() {
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="new-page-locale">{t("field_locale")}</Label>
-        <select
-          id="new-page-locale"
-          className="h-12 w-full rounded-xl border border-transparent bg-black/[0.035] px-4 text-sm outline-none dark:bg-white/5"
-          {...form.register("locale")}
-        >
-          {routing.locales.map((locale) => (
-            <option key={locale} value={locale}>
-              {t(locale === "en" ? "locale_en" : "locale_id")}
-            </option>
-          ))}
-        </select>
-      </div>
+      <p className="text-xs text-muted-foreground">{t("dual_locale_hint")}</p>
 
       <Button type="submit" disabled={form.formState.isSubmitting}>
         {t("submit")}

@@ -79,7 +79,7 @@ export function HeroBlock(props: {
     <section className="relative w-full">
       <div
         className={cn(
-          "relative w-full overflow-hidden rounded-b-3xl px-4 pt-16 sm:rounded-b-[2.5rem] sm:px-6 sm:pt-20 lg:rounded-b-[3rem] lg:px-8 lg:pt-24",
+          "relative -mt-[70px] w-full overflow-hidden rounded-b-3xl px-4 pt-[calc(4rem+70px)] sm:rounded-b-[2.5rem] sm:px-6 sm:pt-[calc(5rem+70px)] lg:rounded-b-[3rem] lg:px-8 lg:pt-[calc(6rem+70px)]",
           showStats ? "pb-26 sm:pb-36" : "pb-16 sm:pb-20",
           !props.image && colorClasses.bg,
         )}
@@ -376,6 +376,9 @@ export function ImageBlock(props: { image: string; alt: string }) {
   );
 }
 
+// Kept for pages saved before the Layout category split into Grid/Flex/Space —
+// not listed in any `puckConfig` category, so it no longer appears in the picker,
+// but existing "Container" blocks in stored `puckData` still resolve and render.
 export function ContainerBlock(props: {
   layout: keyof typeof CONTAINER_LAYOUT;
   gap: keyof typeof CONTAINER_GAP;
@@ -414,6 +417,84 @@ export function ContainerBlock(props: {
   /* eslint-enable react-hooks/refs */
 }
 
+export function GridBlock(props: {
+  columns: number;
+  gap: number;
+  layout: { padding: keyof typeof CONTAINER_PADDING };
+  color: string;
+  children: SlotComponent;
+  puck: { dragRef: ((element: Element | null) => void) | null };
+}) {
+  const colorClasses = getColorClasses(props.color);
+
+  // See the matching comment on `ContainerBlock` re: padding/max-width living on the
+  // slot wrapper, and `puck.dragRef` being Puck's required callback ref for `inline: true`.
+  /* eslint-disable react-hooks/refs */
+  return (
+    <section
+      ref={props.puck.dragRef}
+      className={cn(colorClasses.bg, colorClasses.text)}
+    >
+      {props.children({
+        className: cn(
+          "mx-auto w-full max-w-6xl grid px-4 sm:px-6 lg:px-8",
+          CONTAINER_PADDING[props.layout.padding],
+        ),
+        style: {
+          gridTemplateColumns: `repeat(${props.columns}, minmax(0, 1fr))`,
+          gap: `${props.gap}px`,
+        },
+        collisionAxis: "dynamic",
+        minEmptyHeight: 160,
+      })}
+    </section>
+  );
+  /* eslint-enable react-hooks/refs */
+}
+
+const FLEX_JUSTIFY = {
+  start: "justify-start",
+  center: "justify-center",
+  end: "justify-end",
+};
+
+export function FlexBlock(props: {
+  direction: "row" | "col";
+  justify: keyof typeof FLEX_JUSTIFY;
+  gap: number;
+  wrap: boolean;
+  layout: { padding: keyof typeof CONTAINER_PADDING };
+  color: string;
+  children: SlotComponent;
+  puck: { dragRef: ((element: Element | null) => void) | null };
+}) {
+  const colorClasses = getColorClasses(props.color);
+
+  // See the matching comment on `ContainerBlock` re: padding/max-width living on the
+  // slot wrapper, and `puck.dragRef` being Puck's required callback ref for `inline: true`.
+  /* eslint-disable react-hooks/refs */
+  return (
+    <section
+      ref={props.puck.dragRef}
+      className={cn(colorClasses.bg, colorClasses.text)}
+    >
+      {props.children({
+        className: cn(
+          "mx-auto flex w-full max-w-6xl px-4 sm:px-6 lg:px-8",
+          props.direction === "col" ? "flex-col" : "flex-row",
+          props.wrap ? "flex-wrap" : "flex-nowrap",
+          FLEX_JUSTIFY[props.justify],
+          CONTAINER_PADDING[props.layout.padding],
+        ),
+        style: { gap: `${props.gap}px` },
+        collisionAxis: "dynamic",
+        minEmptyHeight: 160,
+      })}
+    </section>
+  );
+  /* eslint-enable react-hooks/refs */
+}
+
 export type HeroBlockProps = Parameters<typeof HeroBlock>[0];
 export type RichTextBlockProps = Parameters<typeof RichTextBlock>[0];
 export type ImageWithTextBlockProps = Parameters<typeof ImageWithTextBlock>[0];
@@ -422,6 +503,8 @@ export type GalleryBlockProps = Parameters<typeof GalleryBlock>[0];
 export type AccordionBlockProps = Parameters<typeof AccordionBlock>[0];
 export type SpacerBlockProps = Parameters<typeof SpacerBlock>[0];
 export type ContainerBlockProps = Parameters<typeof ContainerBlock>[0];
+export type GridBlockProps = Parameters<typeof GridBlock>[0];
+export type FlexBlockProps = Parameters<typeof FlexBlock>[0];
 export type HeadingBlockProps = Parameters<typeof HeadingBlock>[0];
 export type ParagraphBlockProps = Parameters<typeof ParagraphBlock>[0];
 export type ImageBlockProps = Parameters<typeof ImageBlock>[0];

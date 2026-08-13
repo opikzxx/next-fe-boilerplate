@@ -1,6 +1,7 @@
 import * as z from "zod";
-import { routing } from "@/lib/i18n-routing";
 import { slugPattern } from "@/lib/slug";
+
+export const SLUG_TAKEN_ERROR = "SLUG_TAKEN";
 
 type CreatePageValidationMessages = {
   title_required: string;
@@ -14,9 +15,6 @@ export function createPageSchema(messages: CreatePageValidationMessages) {
       .string()
       .min(1, messages.slug_invalid)
       .regex(slugPattern, messages.slug_invalid),
-    locale: z
-      .string()
-      .refine((value) => routing.locales.includes(value), "Invalid locale"),
   });
 }
 

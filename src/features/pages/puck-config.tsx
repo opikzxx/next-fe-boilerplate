@@ -3,7 +3,9 @@ import {
   AccordionBlock,
   ContainerBlock,
   CTABannerBlock,
+  FlexBlock,
   GalleryBlock,
+  GridBlock,
   HeadingBlock,
   HeroBlock,
   ImageBlock,
@@ -16,7 +18,9 @@ import type {
   AccordionBlockProps,
   ContainerBlockProps,
   CTABannerBlockProps,
+  FlexBlockProps,
   GalleryBlockProps,
+  GridBlockProps,
   HeadingBlockProps,
   HeroBlockProps,
   ImageBlockProps,
@@ -228,7 +232,7 @@ const accordion: ComponentConfig<AccordionBlockProps> = {
 };
 
 const spacer: ComponentConfig<SpacerBlockProps> = {
-  label: "Spacer",
+  label: "Space",
   fields: {
     size: {
       type: "select",
@@ -367,11 +371,127 @@ const container: ComponentConfig<ContainerFieldProps> = {
   render: (props) => <ContainerBlock {...props} />,
 };
 
+const LAYOUT_FIELD = {
+  type: "object" as const,
+  label: "Layout",
+  objectFields: {
+    padding: {
+      type: "select" as const,
+      label: "Vertical padding",
+      options: [
+        { label: "None", value: "none" },
+        { label: "Small", value: "sm" },
+        { label: "Medium", value: "md" },
+        { label: "Large", value: "lg" },
+      ],
+    },
+  },
+};
+
+type GridFieldProps = Omit<GridBlockProps, "children" | "puck"> & {
+  children: Slot;
+};
+
+const grid: ComponentConfig<GridFieldProps> = {
+  label: "Grid",
+  // See the matching comment on the `container` config re: `inline: true` and nested drops.
+  inline: true,
+  fields: {
+    columns: {
+      type: "number",
+      label: "Number of columns",
+      min: 1,
+      max: 6,
+    },
+    gap: {
+      type: "number",
+      label: "Gap",
+      min: 0,
+      max: 96,
+      step: 4,
+    },
+    layout: LAYOUT_FIELD,
+    color: COLOR_FIELD,
+    children: { type: "slot" },
+  },
+  defaultProps: {
+    columns: 2,
+    gap: 24,
+    layout: { padding: "md" },
+    color: "none",
+    children: [],
+  },
+  render: (props) => <GridBlock {...props} />,
+};
+
+type FlexFieldProps = Omit<FlexBlockProps, "children" | "puck"> & {
+  children: Slot;
+};
+
+const flex: ComponentConfig<FlexFieldProps> = {
+  label: "Flex",
+  // See the matching comment on the `container` config re: `inline: true` and nested drops.
+  inline: true,
+  fields: {
+    direction: {
+      type: "radio",
+      label: "Direction",
+      options: [
+        { label: "Row", value: "row" },
+        { label: "Column", value: "col" },
+      ],
+    },
+    justify: {
+      type: "radio",
+      label: "Justify content",
+      options: [
+        { label: "Start", value: "start" },
+        { label: "Center", value: "center" },
+        { label: "End", value: "end" },
+      ],
+    },
+    gap: {
+      type: "number",
+      label: "Gap",
+      min: 0,
+      max: 96,
+      step: 4,
+    },
+    wrap: {
+      type: "radio",
+      label: "Wrap",
+      options: [
+        { label: "Wrap", value: true },
+        { label: "No wrap", value: false },
+      ],
+    },
+    layout: LAYOUT_FIELD,
+    color: COLOR_FIELD,
+    children: { type: "slot" },
+  },
+  defaultProps: {
+    direction: "row",
+    justify: "start",
+    gap: 24,
+    wrap: true,
+    layout: { padding: "md" },
+    color: "none",
+    children: [],
+  },
+  render: (props) => <FlexBlock {...props} />,
+};
+
 export const puckConfig = {
+  // Suppresses Puck's built-in root "title" field — it would write to
+  // `data.root.props.title`, disconnected from the `Page.title` column that
+  // `PageMetaPanel` already edits, so a second unrelated field would be confusing.
+  root: {
+    fields: {},
+  },
   categories: {
     layout: {
       title: "Layout",
-      components: ["Container", "Spacer"],
+      components: ["Grid", "Flex", "Space"],
       defaultExpanded: true,
     },
     text: {
@@ -398,7 +518,12 @@ export const puckConfig = {
     CTABanner: ctaBanner,
     Gallery: gallery,
     Accordion: accordion,
-    Spacer: spacer,
+    Grid: grid,
+    Flex: flex,
+    Space: spacer,
+    // Legacy type, kept only so pages saved before the Grid/Flex/Space split
+    // still resolve — intentionally absent from `categories`, so it's no
+    // longer offered in the component picker.
     Container: container,
   },
 };

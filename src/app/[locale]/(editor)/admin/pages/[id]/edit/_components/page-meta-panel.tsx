@@ -38,14 +38,13 @@ export function PageMetaPanel(props: { page: Page }) {
   const ogImage = useWatch({ control: form.control, name: "ogImage" });
 
   return (
-    <details className="border-b border-border bg-muted/30 px-4 py-3">
-      <summary className="cursor-pointer text-sm font-semibold">
+    <div className="flex flex-col gap-4 border-b border-border px-4 py-4">
+      <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
         {t("meta_panel_title")}
-      </summary>
-      <form
-        onSubmit={handleSubmit}
-        className="mt-4 grid max-w-2xl gap-4 sm:grid-cols-2"
-      >
+      </p>
+      {/* Not a <form>: this panel is rendered inside Puck's own fields form via
+          `overrides.fields`, and nesting <form> inside <form> is invalid HTML. */}
+      <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <Label htmlFor="meta-page-title">{t("field_page_title")}</Label>
           <Input id="meta-page-title" {...form.register("title")} />
@@ -54,25 +53,28 @@ export function PageMetaPanel(props: { page: Page }) {
           <Label htmlFor="meta-title">{t("field_meta_title")}</Label>
           <Input id="meta-title" {...form.register("metaTitle")} />
         </div>
-        <div className="flex flex-col gap-2 sm:col-span-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="meta-description">
             {t("field_meta_description")}
           </Label>
           <Input id="meta-description" {...form.register("metaDescription")} />
         </div>
-        <div className="flex flex-col gap-2 sm:col-span-2">
+        <div className="flex flex-col gap-2">
           <Label>{t("field_og_image")}</Label>
           <ImageUploadField
             value={ogImage}
             onChange={(value) => form.setValue("ogImage", value)}
           />
         </div>
-        <div className="flex items-center gap-3 sm:col-span-2">
-          <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-            {t("save_meta")}
-          </Button>
-        </div>
-      </form>
-    </details>
+        <Button
+          type="button"
+          size="sm"
+          disabled={form.formState.isSubmitting}
+          onClick={handleSubmit}
+        >
+          {t("save_meta")}
+        </Button>
+      </div>
+    </div>
   );
 }
