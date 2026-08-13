@@ -1,7 +1,21 @@
 import type { SlotComponent } from "@measured/puck";
-import { ChevronDown, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Briefcase,
+  ChevronDown,
+  Cloud,
+  Globe,
+  Headphones,
+  Server,
+  Settings2,
+  Shield,
+  Sparkles,
+  Wifi,
+  Zap,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { OurSolutionsCarousel } from "@/app/[locale]/(main)/_components/our-solutions-carousel";
 import {
   getColorClasses,
   getOverlayClasses,
@@ -53,6 +67,28 @@ const PARAGRAPH_SIZE = {
   base: "text-base",
   lg: "text-lg",
 };
+
+const CONTENT_WIDTH = {
+  sm: "max-w-md",
+  md: "max-w-3xl",
+  lg: "max-w-4xl",
+  xl: "max-w-6xl",
+  full: "max-w-full",
+};
+
+const TEXT_ALIGN = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+};
+
+// "full" drops the max-width cap AND the side padding, so the block can sit flush
+// against the edges of whatever it's placed in instead of just being unconstrained.
+function widthClasses(width: keyof typeof CONTENT_WIDTH) {
+  return width === "full"
+    ? "w-full"
+    : cn("w-full px-4 sm:px-6 lg:px-8", CONTENT_WIDTH[width]);
+}
 
 export function HeroBlock(props: {
   heading: string;
@@ -158,12 +194,20 @@ export function RichTextBlock(props: {
   heading: string;
   body: string;
   color: string;
+  width: keyof typeof CONTENT_WIDTH;
+  align: keyof typeof TEXT_ALIGN;
 }) {
   const colorClasses = getColorClasses(props.color);
 
   return (
     <section className={cn(colorClasses.bg, colorClasses.text)}>
-      <div className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <div
+        className={cn(
+          "mx-auto py-12",
+          widthClasses(props.width),
+          TEXT_ALIGN[props.align],
+        )}
+      >
         {props.heading && (
           <h2 className="text-4xl font-bold leading-tight md:text-5xl">
             {props.heading}
@@ -316,11 +360,15 @@ export function HeadingBlock(props: {
   level: "h2" | "h3";
   size: keyof typeof HEADING_SIZE;
   color: string;
+  width: keyof typeof CONTENT_WIDTH;
+  align: keyof typeof TEXT_ALIGN;
 }) {
   const Tag = props.level;
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
+    <div
+      className={cn("mx-auto", widthClasses(props.width), TEXT_ALIGN[props.align])}
+    >
       <Tag
         className={cn(
           "font-bold leading-tight",
@@ -338,9 +386,13 @@ export function ParagraphBlock(props: {
   text: string;
   size: keyof typeof PARAGRAPH_SIZE;
   color: string;
+  width: keyof typeof CONTENT_WIDTH;
+  align: keyof typeof TEXT_ALIGN;
 }) {
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
+    <div
+      className={cn("mx-auto", widthClasses(props.width), TEXT_ALIGN[props.align])}
+    >
       <p
         className={cn(
           "whitespace-pre-wrap",
@@ -354,9 +406,259 @@ export function ParagraphBlock(props: {
   );
 }
 
-export function ImageBlock(props: { image: string; alt: string }) {
+const SECTION_HEADING_ALIGN_WRAPPER = {
+  left: "mr-auto",
+  center: "mx-auto",
+  right: "ml-auto",
+};
+
+export function SectionHeadingBlock(props: {
+  badge: string;
+  heading: string;
+  headingAccent: string;
+  subtitle: string;
+  badgeColor: string;
+  accentColor: string;
+  align: keyof typeof TEXT_ALIGN;
+}) {
+  const badgeColorClasses = getColorClasses(props.badgeColor);
+
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+      <div
+        className={cn(
+          "max-w-2xl",
+          SECTION_HEADING_ALIGN_WRAPPER[props.align],
+          TEXT_ALIGN[props.align],
+        )}
+      >
+        {props.badge && (
+          <span
+            className={cn(
+              "inline-flex items-center rounded-full px-4 py-1.5 text-xs font-medium sm:text-sm",
+              badgeColorClasses.bg,
+              getTextColorClass(props.accentColor),
+            )}
+          >
+            {props.badge}
+          </span>
+        )}
+        {(props.heading || props.headingAccent) && (
+          <h2 className="mt-4 text-4xl font-bold leading-tight md:text-5xl">
+            {props.heading}
+            {props.heading && props.headingAccent && " "}
+            <span className={getTextColorClass(props.accentColor)}>
+              {props.headingAccent}
+            </span>
+          </h2>
+        )}
+        {props.subtitle && (
+          <p className="mt-4 text-base text-muted-foreground">
+            {props.subtitle}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const SERVICE_CARD_ICONS = {
+  wifi: Wifi,
+  cloud: Cloud,
+  briefcase: Briefcase,
+  settings: Settings2,
+  shield: Shield,
+  server: Server,
+  globe: Globe,
+  zap: Zap,
+  headphones: Headphones,
+};
+
+const SERVICE_CARDS_COLUMNS = {
+  1: "lg:grid-cols-1",
+  2: "lg:grid-cols-2",
+};
+
+function ServiceCard(props: {
+  image: string;
+  imageAlt: string;
+  description: string;
+  icon: keyof typeof SERVICE_CARD_ICONS;
+  iconColor: string;
+  title: string;
+  ctaLabel: string;
+  ctaHref: string;
+}) {
+  const Icon = SERVICE_CARD_ICONS[props.icon];
+
+  return (
+    <div className="group relative min-h-64 overflow-hidden rounded-2xl sm:min-h-80 sm:rounded-3xl">
+      {props.image && (
+        <Image
+          src={props.image}
+          alt={props.imageAlt}
+          fill
+          unoptimized
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          className="object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+        />
+      )}
+      {props.description && <p className="sr-only">{props.description}</p>}
+
+      <div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-3 rounded-2xl bg-dnet-dark/90 p-4 text-dnet-dark-foreground shadow-lg shadow-black/20 ring-1 ring-white/10 backdrop-blur-sm sm:inset-x-4 sm:bottom-4 sm:rounded-3xl">
+        <span className="flex min-w-0 items-start gap-2.5">
+          <Icon
+            className={cn(
+              "mt-0.5 size-5 shrink-0 sm:size-6",
+              getTextColorClass(props.iconColor),
+            )}
+          />
+          <span className="min-w-0 break-words text-sm font-semibold leading-tight sm:text-base">
+            {props.title}
+          </span>
+        </span>
+        {props.ctaLabel && props.ctaHref && (
+          <Link
+            href={props.ctaHref}
+            className="shrink-0 rounded-full bg-dnet-blue px-4 py-2 text-xs font-semibold text-dnet-blue-foreground transition-colors duration-150 hover:bg-dnet-blue/90 sm:text-sm"
+          >
+            {props.ctaLabel}
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function ServiceCardsBlock(props: {
+  columns: keyof typeof SERVICE_CARDS_COLUMNS;
+  cards: {
+    image: string;
+    imageAlt: string;
+    description: string;
+    icon: keyof typeof SERVICE_CARD_ICONS;
+    iconColor: string;
+    title: string;
+    ctaLabel: string;
+    ctaHref: string;
+  }[];
+  seeMoreLabel: string;
+  seeMoreHref: string;
+}) {
+  return (
+    <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-4 lg:px-0">
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-6",
+          SERVICE_CARDS_COLUMNS[props.columns],
+        )}
+      >
+        {props.cards.map((card, index) => (
+          <ServiceCard key={index} {...card} />
+        ))}
+      </div>
+      {props.seeMoreLabel && props.seeMoreHref && (
+        <div className="mt-10 flex justify-center sm:mt-12">
+          <Link
+            href={props.seeMoreHref}
+            className="group inline-flex items-center justify-center gap-2 rounded-full bg-dnet-blue px-6 py-3 text-sm font-semibold text-dnet-blue-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-dnet-blue/90 hover:shadow-lg sm:px-7 sm:py-3.5 sm:text-base lg:px-8 lg:py-4 lg:text-lg"
+          >
+            {props.seeMoreLabel}
+            <ArrowRight className="size-4 transition-transform duration-150 group-hover:translate-x-0.5 sm:size-5" />
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function SolutionsCarouselBlock(props: {
+  ctaLabel: string;
+  prevLabel: string;
+  nextLabel: string;
+  items: {
+    image: string;
+    imageAlt: string;
+    title: string;
+    href: string;
+  }[];
+}) {
+  return (
+    <div className="w-full py-12">
+      <OurSolutionsCarousel
+        items={props.items}
+        cta={props.ctaLabel}
+        prevLabel={props.prevLabel}
+        nextLabel={props.nextLabel}
+        unoptimized
+      />
+    </div>
+  );
+}
+
+const STATS_BANNER_GRADIENT = {
+  "blue-green": "from-dnet-blue to-dnet-green",
+  "blue-orange": "from-dnet-blue to-dnet-orange",
+  "orange-green": "from-dnet-orange to-dnet-green",
+};
+
+export function StatsBannerBlock(props: {
+  backgroundColor: string;
+  backgroundImage: string;
+  backgroundImageAlt: string;
+  gradient: keyof typeof STATS_BANNER_GRADIENT;
+  stats: { value: string; label: string }[];
+}) {
+  const backgroundClasses = getColorClasses(props.backgroundColor);
+
+  return (
+    <section
+      className={cn(
+        "relative w-full overflow-hidden",
+        backgroundClasses.bg,
+        backgroundClasses.text,
+      )}
+    >
+      {props.backgroundImage && (
+        <Image
+          src={props.backgroundImage}
+          alt={props.backgroundImageAlt}
+          fill
+          unoptimized
+          className="object-cover opacity-60"
+          sizes="100vw"
+        />
+      )}
+      <div className="relative mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap gap-x-10 gap-y-8">
+          {props.stats.map((stat, index) => (
+            <div key={index} className="min-w-40">
+              <p
+                className={cn(
+                  "bg-linear-to-r bg-clip-text text-5xl font-bold text-transparent sm:text-6xl lg:text-7xl",
+                  STATS_BANNER_GRADIENT[props.gradient],
+                )}
+              >
+                {stat.value}
+              </p>
+              <p className="mt-2 text-sm font-medium sm:text-base">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function ImageBlock(props: {
+  image: string;
+  alt: string;
+  width: keyof typeof CONTENT_WIDTH;
+}) {
+  return (
+    <div className={cn("mx-auto", widthClasses(props.width))}>
       {/* `min-w` keeps this box from collapsing to 0 width: its only content is a
       `fill` (absolutely-positioned) <Image>, which flex's shrink-to-fit sizing ignores
       when this block sits inside a "Row (flex)" Container. */}
@@ -508,3 +810,9 @@ export type FlexBlockProps = Parameters<typeof FlexBlock>[0];
 export type HeadingBlockProps = Parameters<typeof HeadingBlock>[0];
 export type ParagraphBlockProps = Parameters<typeof ParagraphBlock>[0];
 export type ImageBlockProps = Parameters<typeof ImageBlock>[0];
+export type SectionHeadingBlockProps = Parameters<typeof SectionHeadingBlock>[0];
+export type ServiceCardsBlockProps = Parameters<typeof ServiceCardsBlock>[0];
+export type SolutionsCarouselBlockProps = Parameters<
+  typeof SolutionsCarouselBlock
+>[0];
+export type StatsBannerBlockProps = Parameters<typeof StatsBannerBlock>[0];

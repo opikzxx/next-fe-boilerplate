@@ -12,7 +12,11 @@ import {
   ImageWithTextBlock,
   ParagraphBlock,
   RichTextBlock,
+  SectionHeadingBlock,
+  ServiceCardsBlock,
+  SolutionsCarouselBlock,
   SpacerBlock,
+  StatsBannerBlock,
 } from "@/features/pages/blocks";
 import type {
   AccordionBlockProps,
@@ -27,7 +31,11 @@ import type {
   ImageWithTextBlockProps,
   ParagraphBlockProps,
   RichTextBlockProps,
+  SectionHeadingBlockProps,
+  ServiceCardsBlockProps,
+  SolutionsCarouselBlockProps,
   SpacerBlockProps,
+  StatsBannerBlockProps,
 } from "@/features/pages/blocks";
 import { ColorField } from "@/features/pages/color-field";
 import { BACKGROUND_COLOR_TOKENS, TEXT_COLOR_TOKENS } from "@/features/pages/color-tokens";
@@ -44,6 +52,28 @@ const COLOR_FIELD = {
       fallback="none"
     />
   ),
+};
+
+const ALIGN_FIELD = {
+  type: "radio" as const,
+  label: "Text align",
+  options: [
+    { label: "Left", value: "left" },
+    { label: "Center", value: "center" },
+    { label: "Right", value: "right" },
+  ],
+};
+
+const WIDTH_FIELD = {
+  type: "select" as const,
+  label: "Width",
+  options: [
+    { label: "Small", value: "sm" },
+    { label: "Medium", value: "md" },
+    { label: "Large", value: "lg" },
+    { label: "Extra large", value: "xl" },
+    { label: "Full width (edge-to-edge)", value: "full" },
+  ],
 };
 
 const TEXT_COLOR_FIELD = {
@@ -135,8 +165,16 @@ const richText: ComponentConfig<RichTextBlockProps> = {
     heading: { type: "text", label: "Heading" },
     body: { type: "textarea", label: "Body" },
     color: COLOR_FIELD,
+    width: WIDTH_FIELD,
+    align: ALIGN_FIELD,
   },
-  defaultProps: { heading: "", body: "", color: "none" },
+  defaultProps: {
+    heading: "",
+    body: "",
+    color: "none",
+    width: "md",
+    align: "left",
+  },
   render: (props) => <RichTextBlock {...props} />,
 };
 
@@ -271,8 +309,17 @@ const heading: ComponentConfig<HeadingBlockProps> = {
       ],
     },
     color: TEXT_COLOR_FIELD,
+    width: WIDTH_FIELD,
+    align: ALIGN_FIELD,
   },
-  defaultProps: { text: "", level: "h2", size: "lg", color: "default" },
+  defaultProps: {
+    text: "",
+    level: "h2",
+    size: "lg",
+    color: "default",
+    width: "md",
+    align: "left",
+  },
   render: (props) => <HeadingBlock {...props} />,
 };
 
@@ -290,9 +337,182 @@ const paragraph: ComponentConfig<ParagraphBlockProps> = {
       ],
     },
     color: TEXT_COLOR_FIELD,
+    width: WIDTH_FIELD,
+    align: ALIGN_FIELD,
   },
-  defaultProps: { text: "", size: "base", color: "default" },
+  defaultProps: {
+    text: "",
+    size: "base",
+    color: "default",
+    width: "md",
+    align: "left",
+  },
   render: (props) => <ParagraphBlock {...props} />,
+};
+
+const sectionHeading: ComponentConfig<SectionHeadingBlockProps> = {
+  label: "Section heading",
+  fields: {
+    badge: { type: "text", label: "Badge" },
+    heading: { type: "text", label: "Heading" },
+    headingAccent: { type: "text", label: "Heading (accent color)" },
+    subtitle: { type: "textarea", label: "Subtitle" },
+    badgeColor: COLOR_FIELD,
+    accentColor: TEXT_COLOR_FIELD,
+    align: ALIGN_FIELD,
+  },
+  defaultProps: {
+    badge: "",
+    heading: "",
+    headingAccent: "",
+    subtitle: "",
+    badgeColor: "accent",
+    accentColor: "dnet-blue",
+    align: "center",
+  },
+  render: (props) => <SectionHeadingBlock {...props} />,
+};
+
+const serviceCards: ComponentConfig<ServiceCardsBlockProps> = {
+  label: "Service cards",
+  fields: {
+    columns: {
+      type: "radio",
+      label: "Columns",
+      options: [
+        { label: "1", value: 1 },
+        { label: "2", value: 2 },
+      ],
+    },
+    cards: {
+      type: "array",
+      label: "Cards",
+      arrayFields: {
+        image: {
+          type: "custom",
+          label: "Background image",
+          render: ({ value, onChange }) => (
+            <ImageUploadField value={value} onChange={onChange} />
+          ),
+        },
+        imageAlt: { type: "text", label: "Background image alt text" },
+        icon: {
+          type: "select",
+          label: "Icon",
+          options: [
+            { label: "Wifi", value: "wifi" },
+            { label: "Cloud", value: "cloud" },
+            { label: "Briefcase", value: "briefcase" },
+            { label: "Settings", value: "settings" },
+            { label: "Shield", value: "shield" },
+            { label: "Server", value: "server" },
+            { label: "Globe", value: "globe" },
+            { label: "Zap", value: "zap" },
+            { label: "Headphones", value: "headphones" },
+          ],
+        },
+        iconColor: TEXT_COLOR_FIELD,
+        title: { type: "text", label: "Title" },
+        description: {
+          type: "textarea",
+          label: "Description (screen readers only)",
+        },
+        ctaLabel: { type: "text", label: "Button label" },
+        ctaHref: { type: "text", label: "Button link" },
+      },
+      defaultItemProps: {
+        image: "",
+        imageAlt: "",
+        icon: "wifi",
+        iconColor: "dnet-orange",
+        title: "",
+        description: "",
+        ctaLabel: "Discover more",
+        ctaHref: "",
+      },
+      getItemSummary: (item) => item.title || "Card",
+    },
+    seeMoreLabel: { type: "text", label: "\"See more\" button label" },
+    seeMoreHref: { type: "text", label: "\"See more\" button link" },
+  },
+  defaultProps: { columns: 2, cards: [], seeMoreLabel: "", seeMoreHref: "" },
+  render: (props) => <ServiceCardsBlock {...props} />,
+};
+
+const solutionsCarousel: ComponentConfig<SolutionsCarouselBlockProps> = {
+  label: "Solutions carousel",
+  fields: {
+    ctaLabel: { type: "text", label: "Card link label" },
+    prevLabel: { type: "text", label: "Previous button label" },
+    nextLabel: { type: "text", label: "Next button label" },
+    items: {
+      type: "array",
+      label: "Items",
+      arrayFields: {
+        image: {
+          type: "custom",
+          label: "Image",
+          render: ({ value, onChange }) => (
+            <ImageUploadField value={value} onChange={onChange} />
+          ),
+        },
+        imageAlt: { type: "text", label: "Image alt text" },
+        title: { type: "text", label: "Title" },
+        href: { type: "text", label: "Link" },
+      },
+      defaultItemProps: { image: "", imageAlt: "", title: "", href: "" },
+      getItemSummary: (item) => item.title || "Item",
+    },
+  },
+  defaultProps: {
+    ctaLabel: "Explore",
+    prevLabel: "Previous",
+    nextLabel: "Next",
+    items: [],
+  },
+  render: (props) => <SolutionsCarouselBlock {...props} />,
+};
+
+const statsBanner: ComponentConfig<StatsBannerBlockProps> = {
+  label: "Stats banner",
+  fields: {
+    backgroundColor: COLOR_FIELD,
+    backgroundImage: {
+      type: "custom",
+      label: "Background image",
+      render: ({ value, onChange }) => (
+        <ImageUploadField value={value} onChange={onChange} />
+      ),
+    },
+    backgroundImageAlt: { type: "text", label: "Background image alt text" },
+    gradient: {
+      type: "select",
+      label: "Number gradient",
+      options: [
+        { label: "Blue to green", value: "blue-green" },
+        { label: "Blue to orange", value: "blue-orange" },
+        { label: "Orange to green", value: "orange-green" },
+      ],
+    },
+    stats: {
+      type: "array",
+      label: "Stats",
+      arrayFields: {
+        value: { type: "text", label: "Value" },
+        label: { type: "text", label: "Label" },
+      },
+      defaultItemProps: { value: "", label: "" },
+      getItemSummary: (item) => item.label || item.value || "Stat",
+    },
+  },
+  defaultProps: {
+    backgroundColor: "dnet-dark",
+    backgroundImage: "",
+    backgroundImageAlt: "",
+    gradient: "blue-green",
+    stats: [],
+  },
+  render: (props) => <StatsBannerBlock {...props} />,
 };
 
 const image: ComponentConfig<ImageBlockProps> = {
@@ -306,8 +526,9 @@ const image: ComponentConfig<ImageBlockProps> = {
       ),
     },
     alt: { type: "text", label: "Alt text" },
+    width: WIDTH_FIELD,
   },
-  defaultProps: { image: "", alt: "" },
+  defaultProps: { image: "", alt: "", width: "lg" },
   render: (props) => <ImageBlock {...props} />,
 };
 
@@ -505,11 +726,23 @@ export const puckConfig = {
     },
     sections: {
       title: "Sections",
-      components: ["Hero", "CTABanner", "Accordion"],
+      components: [
+        "Hero",
+        "SectionHeading",
+        "ServiceCards",
+        "SolutionsCarousel",
+        "StatsBanner",
+        "CTABanner",
+        "Accordion",
+      ],
     },
   },
   components: {
     Hero: hero,
+    SectionHeading: sectionHeading,
+    ServiceCards: serviceCards,
+    SolutionsCarousel: solutionsCarousel,
+    StatsBanner: statsBanner,
     Heading: heading,
     Paragraph: paragraph,
     Image: image,

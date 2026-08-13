@@ -12,7 +12,7 @@ async function Services(props: { locale: string }) {
   });
 
   return (
-    <section className="w-full mx-auto max-w-6xl py-6 px-4 sm:py-10 lg:py-14">
+    <section className="w-full mx-auto max-w-6xl py-6 px-4 sm:px-4 lg:px-0 sm:py-10 lg:py-14">
       <div className="mx-auto max-w-2xl text-center">
         <span className="inline-flex items-center rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-dnet-blue sm:text-sm">
           {t("badge")}

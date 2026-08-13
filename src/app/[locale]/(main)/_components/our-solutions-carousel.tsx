@@ -19,6 +19,7 @@ function OurSolutionsCarousel(props: {
   cta: string;
   prevLabel: string;
   nextLabel: string;
+  unoptimized?: boolean;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
@@ -62,19 +63,22 @@ function OurSolutionsCarousel(props: {
         ref={trackRef}
         className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {props.items.map((item) => (
+        {props.items.map((item, index) => (
           <Link
-            key={item.href + item.title}
+            key={index}
             href={item.href}
             className="group relative h-64 w-1/2 shrink-0 snap-start overflow-hidden sm:h-72 sm:w-1/3 lg:h-80 lg:w-1/4"
           >
-            <Image
-              src={item.image}
-              alt={item.imageAlt}
-              fill
-              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-              className="object-cover transition-transform duration-300 ease-out group-hover:scale-110"
-            />
+            {item.image && (
+              <Image
+                src={item.image}
+                alt={item.imageAlt}
+                fill
+                unoptimized={props.unoptimized}
+                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                className="object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+              />
+            )}
             <div className="absolute inset-0 bg-linear-to-t from-dnet-blue/80 via-dnet-blue/30 to-transparent" />
             <div className="absolute inset-x-0 top-0 p-4 text-right sm:p-5">
               <p className="text-base font-semibold text-white sm:text-lg">
